@@ -13,7 +13,7 @@ const info = {
 // const myrouter = "http://76.138.149.125:8088";
 const myrouter = "https://notecard-bcknd-chdmgkeuhahdczh7.westus-01.azurewebsites.net";
 // const mytarget = "https://proud-bush-0ea3e931e.2.azurestaticapps.net:8080";
-const mytarget = "http://localhost:8080"
+const mytarget = "http://notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net0"
 
 const config = {
   mode: 'development',
