@@ -23,7 +23,8 @@ const config = {
     static: path.join(__dirname, '../dist'),
     port: "8080",
     host: "0.0.0.0",
-    allowedHosts: ['https://proud-bush-0ea3e931e.2.azurestaticapps.net'],
+    public: "notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net",
+    compress: true,
     historyApiFallback: true,
     headers: {
       'Cache-Control': 'no-store',
