@@ -22,7 +22,7 @@ const config = {
   devServer: {
     static: path.join(__dirname, '../dist'),
     port: "8080",
-    host: "https://notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net",
+    host: "notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net",
     compress: true,
     historyApiFallback: true,
     headers: {
