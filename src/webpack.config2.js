@@ -10,8 +10,8 @@ const info = {
   TITLE: 'Flashcards'
 }
 
-// const myrouter = "http://76.138.149.125:8088";
-const myrouter = "https://notecard-bcknd-chdmgkeuhahdczh7.westus-01.azurewebsites.net";
+const myrouter = "http://76.138.149.125:8088";
+// const myrouter = "https://notecard-bcknd-chdmgkeuhahdczh7.westus-01.azurewebsites.net";
 // const mytarget = "https://proud-bush-0ea3e931e.2.azurestaticapps.net:8080";
 const mytarget = "https://notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net"
 
@@ -21,7 +21,7 @@ const config = {
 
   devServer: {
     static: path.join(__dirname, '../dist'),
-    port: "8080",
+    // port: "8080",
     host: "notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net",
     compress: true,
     historyApiFallback: true,
