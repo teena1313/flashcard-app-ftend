@@ -22,8 +22,8 @@ const config = {
     port: "8080",
     host: "0.0.0.0",
     allowedHosts: [
-      '.azurewebsites.net', // allow subdomains of azurewebsites
-      'localhost', // allow local dev
+      '.azurewebsites.net',  // Allow all subdomains of azurewebsites.net
+      'localhost',           // Allow local dev
     ],
     compress: true,
     historyApiFallback: true,
