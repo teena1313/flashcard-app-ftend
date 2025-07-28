@@ -10,10 +10,8 @@ const info = {
   TITLE: 'Flashcards'
 }
 
-const myrouter = "http://76.138.149.125:8088";
-// const myrouter = "https://notecard-bcknd-chdmgkeuhahdczh7.westus-01.azurewebsites.net";
-// const mytarget = "https://proud-bush-0ea3e931e.2.azurestaticapps.net:8080";
-const mytarget = "https://amplify.d2hdfqxipjw4to.amplifyapp.com/"
+const myrouter = "https://notecard-bcknd-chdmgkeuhahdczh7.westus-01.azurewebsites.net";
+const mytarget = "";
 
 const config = {
   mode: 'development',
@@ -22,8 +20,11 @@ const config = {
   devServer: {
     static: path.join(__dirname, '../dist'),
     port: "8080",
-    // host: "notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net",
     host: "0.0.0.0",
+    allowedHosts: [
+      '.azurewebsites.net', // allow subdomains of azurewebsites
+      'localhost', // allow local dev
+    ],
     compress: true,
     historyApiFallback: true,
     headers: {
