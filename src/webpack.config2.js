@@ -37,7 +37,10 @@ const config = {
             changeOrigin: true,
             logLevel: 'debug'
        }
-    }
+    },
+    client: {
+      webSocketURL: 'wss://notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net:8080/ws',
+    },
   },
 
   module: {
