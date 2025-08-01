@@ -39,7 +39,7 @@ const config = {
        }
     },
     client: {
-      webSocketURL: 'wss://notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net:8080/ws',
+      webSocketURL: 'wss://notecard-ftend-faa6dna6dnetgwa6.westus-01.azurewebsites.net/ws',
     },
   },
 
