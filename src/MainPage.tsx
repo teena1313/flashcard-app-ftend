@@ -34,15 +34,17 @@ export class MainPage extends Component<MainProps, MainPageState> {
                 onClick={this.doCreateClick}>I want to make a new deck.</button>
         <button type="button"
                 onClick={this.doScoreClick}>See past scores.</button>
-        <div><p>router {process.env.CONFIG_ROUTER}</p></div>
-        <div><p>target {process.env.CONFIG_TARGET}</p></div>
+        {/* <div><p>router {process.env.CONFIG_ROUTER}</p></div>
+        <div><p>target {process.env.CONFIG_TARGET}</p></div> */}
         </div>
     );
   };
   
   // renders list of names of decks saved on the server
   renderDeckNames = (): JSX.Element => {
-    if (this.state.deckList.length === 0) {
+    if (this.state.deckList === undefined) {
+      return <p>Loading Decks...</p>
+    } else if (this.state.deckList.length === 0) {
       return <p>--No previously saved decks---</p>
     } else {
       const decks: JSX.Element[] = [];
