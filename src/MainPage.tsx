@@ -9,14 +9,14 @@ type MainProps = {
 }
 
 type MainPageState = {
-  deckList: string[];  // list of available decks saved on the server
+  deckList: string[] | undefined;  // list of available decks saved on the server
 }
 
 /** Displays the UI of the Flashcard application. */
 export class MainPage extends Component<MainProps, MainPageState> {
   constructor(props: MainProps) {
     super(props);
-    this.state = {deckList: []};
+    this.state = {deckList: undefined};
   }
   
   componentDidMount = (): void => {
