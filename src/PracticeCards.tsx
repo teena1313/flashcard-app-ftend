@@ -14,7 +14,9 @@ type PracticeState = {
   isFront: boolean,  // is the player viewing the front or back of the card
   cards: card[] | undefined,  // array of all the cards in the deck
   deckName: string,  // name of the deck being practiced
-  playerName: string  // name of the player
+  playerName: string,  // name of the player
+  requestedSentence: boolean // did the player request a sentence
+  AISentence: string | undefined // sentence created by the AI
 }
 
 /** Displays the UI of the Practice Card page. */
@@ -23,7 +25,8 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
   constructor(props: PracticeProps) {
     super(props);
     this.state = {correct: 0, currCard: 0, totalCards: -1, isFront: true, 
-                  cards: undefined, deckName: this.props.initDeck, playerName: ""};
+                  cards: undefined, deckName: this.props.initDeck, playerName: "", 
+                  requestedSentence: false, AISentence: undefined};
   }
 
   // load in the cards associated with the deck name
@@ -59,8 +62,10 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
           <h3>Correct: {this.state.correct}</h3>
           <h3>Incorrect: {this.state.currCard - this.state.correct}</h3>
           <p className="card">{this.state.cards[this.state.currCard].front}</p>
-          <p>You've completed {this.state.currCard} cards out of {this.state.totalCards}.</p>
           <button type="button" onClick={this.doFlipClick}>See Back</button>
+          <br></br>
+          <p>You've completed {this.state.currCard} cards out of {this.state.totalCards}.</p>
+          {this.renderAISentence()}
           <br></br>
           <p>WARNING: all progress will be lost if page is refreshed...</p>
         </div>
@@ -73,11 +78,11 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
           <h3>Correct: {this.state.correct}</h3>
           <h3>Incorrect: {this.state.currCard - this.state.correct}</h3>
           <p className="card">{this.state.cards[this.state.currCard].back}</p>
-          <p>You've completed {this.state.currCard} cards out of {this.state.totalCards}.</p>
           <button type="button" onClick={this.doFlipClick}>See Front</button>
           <button type="button" onClick={this.doCorrectClick}>Correct</button>
           <button type="button" onClick={this.doIncorrectClick}>Incorrect</button>
           <br></br>
+          <p>You've completed {this.state.currCard} cards out of {this.state.totalCards}.</p>
           <p>WARNING: all progress will be lost if page is refreshed...</p>
         </div>
       );
@@ -90,6 +95,36 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
     fetch(url)
       .then(this.doLoadResp)
       .catch(() => this.doLoadError("failed to connect to server"));
+  }
+
+  // Render the AI sentence component
+  renderAISentence = (): JSX.Element => {
+    if (this.state.requestedSentence) {
+      if (this.state.AISentence === undefined) {
+        return <p>Beep Boop! I'm loading your AI Content right now.</p>
+      } else if (this.state.AISentence === "meow") {
+        // word or phrase was invalid
+        return (
+        <div>
+          <p>Uh Oh! The current card is not a valid word or phrase so the AI was unable to generate a sentence.</p>
+          <button type="button"
+           onClick={this.doSentenceClick}>Close</button>
+        </div>
+        )
+      } else {
+        return (
+        <div>
+          {this.state.AISentence}
+          <button type="button"
+           onClick={this.doSentenceClick}>Close</button>
+          <button type="button"
+           onClick={this.doDiffSentenceClick}>Give me a different sentence</button>
+        </div>
+        )
+      }
+    }
+    return <button type="button"
+            onClick={this.doSentenceClick}>Use this word/phrase in a sentence</button>
   }
 
   // parses json response, load errors if unsuccessful
@@ -129,17 +164,71 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
     }
   };
 
+  // generates a sentence using gemini if the user just requested a sentence, otherwise set sentence to be undefined
+  doSentenceClick = (_evt: MouseEvent<HTMLButtonElement>): void => {
+    if (this.state.requestedSentence) {
+      this.setState({AISentence: undefined, requestedSentence: false});
+    } else {
+      this.setState({requestedSentence: true})
+      const currWord = this.state.cards? this.state.cards[this.state.currCard].front : ""
+      console.log(currWord)
+      const url = "/api/getAISentence?tokens=" + encodeURIComponent(currWord);
+      fetch(url)
+          .then(this.doAIResp)
+          .catch(() => this.doAIError("failed to connect to server"));
+    }
+  };
+
+  // generates a sentence using gemini
+  doDiffSentenceClick = (_evt: MouseEvent<HTMLButtonElement>): void => {
+    const url = "/api/getAISentence?tokens=" + encodeURIComponent(this.state.cards? this.state.cards[this.state.currCard].front : "");
+    fetch(url)
+        .then(this.doAIResp)
+        .catch(() => this.doAIError("failed to connect to server"));
+  };
+
+  // checks that our API call returned a string and saves it to state
+  // otherwise throw errors accordingly
+  doAIResp = (res: Response): void => {
+    if (res.status === 200) {
+      res.json()
+      .then((val) => {
+        const content = val.answer; // parse response
+        if (typeof content === 'string') {
+          if (content.toLowerCase() === "meow"){
+            this.setState({AISentence: "meow"})
+          } else {
+            this.setState({AISentence: content});
+          }
+        } else {
+          console.error("not a string", val);
+        }
+      })
+      .catch(() => this.doAIError("200 response is not valid JSON"));
+    } else if (res.status === 400) {
+      res.text().then(this.doAIError)
+        .catch(() => this.doAIError("400 response is not text"));
+    } else {
+      this.doAIError(`bad status code ${res.status}`);
+    }
+  }
+
+  // error processor for /listDecks fetch call
+  doAIError = (msg: string): void => {
+    console.error(`Error fetching /getAISentence or /getAnotherAISentence: ${msg}`);
+  }
+
   // update state of number of correct cards
   doCorrectClick = (_evt: MouseEvent<HTMLButtonElement>): void => {
     const curr: number = this.state.currCard + 1;
     const currCorrect: number = this.state.correct + 1;
-    this.setState({currCard: curr, correct: currCorrect, isFront: true});
+    this.setState({currCard: curr, correct: currCorrect, isFront: true, AISentence: undefined, requestedSentence: false});
   };
 
   // update state of number of total cards seen
   doIncorrectClick = (_evt: MouseEvent<HTMLButtonElement>): void => {
     const curr: number = this.state.currCard + 1;
-    this.setState({currCard: curr, isFront: true});
+    this.setState({currCard: curr, isFront: true, AISentence: undefined, requestedSentence: false});
   };
 
   // makes fetch call to record this player's performance (score)

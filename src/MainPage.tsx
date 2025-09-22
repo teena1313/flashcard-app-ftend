@@ -36,7 +36,7 @@ export class MainPage extends Component<MainProps, MainPageState> {
                 onClick={this.doScoreClick}>See past scores.</button>
         {/* <div><p>router {process.env.CONFIG_ROUTER}</p></div>
         <div><p>target {process.env.CONFIG_TARGET}</p></div> */}
-        </div>
+      </div>
     );
   };
   

@@ -10,7 +10,8 @@ const info = {
   TITLE: 'Flashcards'
 }
 
-const myrouter = "http://76.138.149.125:8088";
+// const myrouter = "http://76.138.149.125:8088";
+const myrouter = "http://localhost:8088"
 const mytarget = "http://localhost:8080";
 
 const config = {
