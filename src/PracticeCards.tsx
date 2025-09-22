@@ -61,12 +61,11 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
           <h1>Let's Practice {this.state.deckName}!</h1>
           <h3>Correct: {this.state.correct}</h3>
           <h3>Incorrect: {this.state.currCard - this.state.correct}</h3>
-          <p className="card">{this.state.cards[this.state.currCard].front}</p>
-          <button type="button" onClick={this.doFlipClick}>See Back</button>
-          <br></br>
-          <p>You've completed {this.state.currCard} cards out of {this.state.totalCards}.</p>
+          <p>You've completed {this.state.currCard} out of {this.state.totalCards} cards. Click on the card to flip it over.</p>
+          <button type="button" className="card" onClick={this.doFlipClick}>{this.state.cards[this.state.currCard].front}</button>
+          <br/>
+          <br/>
           {this.renderAISentence()}
-          <br></br>
           <p>WARNING: all progress will be lost if page is refreshed...</p>
         </div>
       );
@@ -77,12 +76,14 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
           <h1>Let's Practice {this.state.deckName}!</h1>
           <h3>Correct: {this.state.correct}</h3>
           <h3>Incorrect: {this.state.currCard - this.state.correct}</h3>
-          <p className="card">{this.state.cards[this.state.currCard].back}</p>
-          <button type="button" onClick={this.doFlipClick}>See Front</button>
-          <button type="button" onClick={this.doCorrectClick}>Correct</button>
-          <button type="button" onClick={this.doIncorrectClick}>Incorrect</button>
+          <p>You've completed {this.state.currCard} out of {this.state.totalCards} cards. Click on the card to flip it over.</p>
+          <button type="button" className="card" onClick={this.doFlipClick}>{this.state.cards[this.state.currCard].back}</button>
+          <br/>
+          <br/>
+          Did you get it correct? :O &nbsp; &nbsp;
+          <button style={{background:"green", color: "white"}} type="button" onClick={this.doCorrectClick}>Yes</button> &nbsp;
+          <button style={{background:"red", color: "white"}} type="button" onClick={this.doIncorrectClick}>No :(</button>
           <br></br>
-          <p>You've completed {this.state.currCard} cards out of {this.state.totalCards}.</p>
           <p>WARNING: all progress will be lost if page is refreshed...</p>
         </div>
       );
@@ -101,7 +102,7 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
   renderAISentence = (): JSX.Element => {
     if (this.state.requestedSentence) {
       if (this.state.AISentence === undefined) {
-        return <p>Beep Boop! I'm loading your AI Content right now.</p>
+        return <i>Beep Boop! I'm loading your AI Content right now.</i>
       } else if (this.state.AISentence === "meow") {
         // word or phrase was invalid
         return (
@@ -114,17 +115,20 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
       } else {
         return (
         <div>
-          {this.state.AISentence}
-          <button type="button"
-           onClick={this.doSentenceClick}>Close</button>
+          "{this.state.AISentence}"
+          <br/>
+          <br/>
           <button type="button"
            onClick={this.doDiffSentenceClick}>Give me a different sentence</button>
+          <button type="button"
+           onClick={this.doSentenceClick}>Close</button> <i>NOTE: This sentence is generated using Gemini AI's free API, so it might be strange or not very good.</i>
+          <br/>
         </div>
         )
       }
     }
     return <button type="button"
-            onClick={this.doSentenceClick}>Use this word/phrase in a sentence</button>
+            onClick={this.doSentenceClick}>Need a hint? Ask AI to use this word/phrase in a sentence</button>
   }
 
   // parses json response, load errors if unsuccessful
@@ -158,9 +162,9 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
   // "flips" the card by setting the state of isFront
   doFlipClick = (_evt: MouseEvent<HTMLButtonElement>): void => {
     if (this.state.isFront) {
-      this.setState({isFront: false});
+      this.setState({isFront: false, AISentence: undefined, requestedSentence: false});
     } else {
-      this.setState({isFront: true});
+      this.setState({isFront: true, AISentence: undefined, requestedSentence: false});
     }
   };
 
@@ -171,7 +175,6 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
     } else {
       this.setState({requestedSentence: true})
       const currWord = this.state.cards? this.state.cards[this.state.currCard].front : ""
-      console.log(currWord)
       const url = "/api/getAISentence?tokens=" + encodeURIComponent(currWord);
       fetch(url)
           .then(this.doAIResp)
