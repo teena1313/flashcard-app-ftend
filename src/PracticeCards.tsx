@@ -64,7 +64,6 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
           <p>You've completed {this.state.currCard} out of {this.state.totalCards} cards. Click on the card to flip it over.</p>
           <button type="button" className="card" onClick={this.doFlipClick}>{this.state.cards[this.state.currCard].front}</button>
           <br/>
-          <br/>
           {this.renderAISentence()}
           <p>WARNING: all progress will be lost if page is refreshed...</p>
         </div>
@@ -102,7 +101,10 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
   renderAISentence = (): JSX.Element => {
     if (this.state.requestedSentence) {
       if (this.state.AISentence === undefined) {
-        return <i>Beep Boop! I'm loading your AI Content right now.</i>
+        return (
+        <p>
+          <i>Beep Boop! I'm loading your AI Content right now.</i></p>
+        )
       } else if (this.state.AISentence === "meow") {
         // word or phrase was invalid
         return (
@@ -115,9 +117,7 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
       } else {
         return (
         <div>
-          "{this.state.AISentence}"
-          <br/>
-          <br/>
+          <p>"{this.state.AISentence}"</p>
           <button type="button"
            onClick={this.doDiffSentenceClick}>Give me a different sentence</button>
           <button type="button"
@@ -127,8 +127,12 @@ export class PracticeCards extends Component<PracticeProps, PracticeState> {
         )
       }
     }
-    return <button type="button"
+    return (
+    <>
+      <br/>
+      <button type="button"
             onClick={this.doSentenceClick}>Need a hint? Ask AI to use this word/phrase in a sentence</button>
+    </>)
   }
 
   // parses json response, load errors if unsuccessful
