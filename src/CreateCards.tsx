@@ -2,12 +2,14 @@ import React, { Component, ChangeEvent, MouseEvent } from "react";
 import "./style.css";
 
 type CreateProps = {
+  initList: string[] // list of decks
   onBack: () => void  // callback function to go back to main page
 }
 
 type CreateState = {
   deckName: string,  // keeps track of name of card deck inputted
   deckContent: string,  // keeps track of content of card inputted
+  deckList: string[]
 }
 
 /** Displays the UI of the card creation page. */
@@ -15,7 +17,7 @@ export class CreateCards extends Component<CreateProps, CreateState> {
 
   constructor(props: CreateProps) {
     super(props);
-    this.state = { deckName: "", deckContent: "" };
+    this.state = { deckName: "", deckContent: "", deckList: this.props.initList? this.props.initList : [] };
   }
   
   // displays UI of create page
@@ -69,10 +71,19 @@ export class CreateCards extends Component<CreateProps, CreateState> {
     // TODO: implement
     const currName = this.state.deckName.trim();
     const currContent = this.state.deckContent.trim();
+
+    // Error checking!
+    
     if (currName.length === 0 || currContent.length === 0) {
       // alert user if no deck name was given
       // doesn't update state
       alert("Deck must have a name AND contain at least one card.");
+      return;
+    }
+
+    if (this.state.deckList.includes(currName)) {
+      // tried to make deck with existing name
+      alert("Deck with the same name already exists, please pick a different name!");
       return;
     }
     
@@ -90,14 +101,10 @@ export class CreateCards extends Component<CreateProps, CreateState> {
   doAddResp = (res: Response): void => {
     if (res.status === 200) {
       res.json().then((val) => {
-        if (val.saved === 1) {
-          // tried to make deck with existing name
-          alert("Deck with the same name already exists, please pick a different name!");
-          return;
-        } else if (val.saved === 2) {
+        if (val.saved === 0) {
           alert("One or more of the given cards were not formatted correctly :(");
           return;
-        } else if (val.saved === 3) {
+        } else if (val.saved === 1) {
           // deck was actaully saved successfully!!
           this.props.onBack();
         }

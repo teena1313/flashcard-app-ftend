@@ -2,7 +2,7 @@ import React, { Component, MouseEvent } from "react";
 import { parseRecord } from './record';
 
 type MainProps = {
-  onCreate: () => void,  // callback function to go to create page
+  onCreate: (deckList: string[]) => void,  // callback function to go to create page
   onScore: () => void, // callback function to view scores
   onLoadDeck:(deck: string) => void  // callback function to let the app know
                                      // which deck we're going to load to practice
@@ -92,7 +92,7 @@ export class MainPage extends Component<MainProps, MainPageState> {
 
   // Use callback function to go to create page
   doCreateClick = (_evt: MouseEvent<HTMLButtonElement>): void => {
-    this.props.onCreate();
+    this.props.onCreate(this.state.deckList? this.state.deckList : []);
   };
 
   // Use callback function to go to create page

@@ -5,7 +5,7 @@ import { PracticeCards } from './PracticeCards';
 import { SeeScore } from './SeeScore';
 
 // types of pages possible in the FlashcardApp
-type Page = {kind: "main"} | {kind: "create"} | 
+type Page = {kind: "main"} | {kind: "create", deckList: string[]} | 
             {kind: "practice", deckName: string} | {kind: "score"};
 
 type FlashcardAppState = {
@@ -23,9 +23,9 @@ export class FlashcardApp extends Component<{}, FlashcardAppState> {
   // displays the correct page based on the state
   render = (): JSX.Element => {
     if (this.state.page.kind === "main") {
-      return <MainPage onCreate={this.doBackClick} onLoadDeck={this.doPracticeClick} onScore={this.doScoreClick}/>;
+      return <MainPage onCreate={this.doCreateClick} onLoadDeck={this.doPracticeClick} onScore={this.doScoreClick}/>;
     } else if (this.state.page.kind === "create") {
-      return <CreateCards onBack={this.doBackClick}/>;
+      return <CreateCards onBack={this.doBackClick} initList={this.state.page.deckList}/>;
     } else if (this.state.page.kind === "practice") {
       return <PracticeCards initDeck={this.state.page.deckName} 
                             onScore={this.doBackClick} />;
@@ -38,8 +38,6 @@ export class FlashcardApp extends Component<{}, FlashcardAppState> {
   doBackClick = (): void => {
     if (this.state.page.kind === "practice") {
       this.setState({page: {kind: "score"}});
-    } else if (this.state.page.kind === "main") {
-      this.setState({page: {kind: "create"}});
     } else {
       this.setState({page: {kind: "main"}});
     }
@@ -53,5 +51,9 @@ export class FlashcardApp extends Component<{}, FlashcardAppState> {
   doPracticeClick = (deck: string): void => {
     this.setState({page: {kind: "practice", deckName: deck}});
   };
+
+  doCreateClick = (decks: string[]): void => {
+    this.setState({page: {kind: "create", deckList: decks}});
+  }
 
 }
